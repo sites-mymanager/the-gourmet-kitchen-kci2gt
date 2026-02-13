@@ -1,0 +1,1996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - The Gourmet Kitchen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Animate.css for beautiful animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        /* ========================================
+           CSS Variables (Vite-style theming)
+           ======================================== */
+        :root {
+            --color-primary: #ff5722;
+            --color-secondary: #bf360c;
+            --color-accent: #ffab40;
+            --color-bg: #fafafa;
+            --color-text: #1a1a2e;
+            --color-text-muted: #6b7280;
+            --color-border: #e5e7eb;
+            --color-surface: #ffffff;
+            --color-surface-elevated: #f9fafb;
+
+            --gradient-primary: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            --gradient-dark: linear-gradient(135deg, #1f2937, #111827);
+
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 40px rgb(0 0 0 / 0.08);
+            --shadow-xl: 0 25px 60px rgb(0 0 0 / 0.15);
+
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-full: 9999px;
+
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-display: 'Poppins', var(--font-sans);
+
+            --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+            --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+            --container-max: 1200px;
+            --container-narrow: 800px;
+            --section-padding: clamp(60px, 10vw, 100px);
+        }
+
+        /* ========================================
+           Base Reset & Typography
+           ======================================== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--color-text);
+            background: var(--color-bg);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-display);
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+
+        img { max-width: 100%; height: auto; display: block; }
+        a { color: inherit; text-decoration: none; }
+
+        /* ========================================
+           Animations
+           ======================================== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        /* Animate.css scroll trigger support */
+        .animate__animated {
+            --animate-duration: 0.8s;
+        }
+        .animate__animated.animate__slow {
+            --animate-duration: 1.2s;
+        }
+        .animate__animated.animate__fast {
+            --animate-duration: 0.5s;
+        }
+
+        /* Hide elements until they're animated */
+        [data-animate] {
+            opacity: 0;
+        }
+        [data-animate].animate__animated {
+            opacity: 1;
+        }
+
+        /* Editor-compatible background classes */
+        .has-bg-image {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        [data-bg-image] {
+            background-image: var(--bg-image);
+        }
+        .has-gradient-bg {
+            background: var(--gradient-primary);
+        }
+        .has-custom-bg {
+            background: var(--color-surface);
+        }
+
+        /* Stagger animations for lists */
+        .stagger > *:nth-child(1) { --animate-delay: 0.1s; }
+        .stagger > *:nth-child(2) { --animate-delay: 0.2s; }
+        .stagger > *:nth-child(3) { --animate-delay: 0.3s; }
+        .stagger > *:nth-child(4) { --animate-delay: 0.4s; }
+        .stagger > *:nth-child(5) { --animate-delay: 0.5s; }
+        .stagger > *:nth-child(6) { --animate-delay: 0.6s; }
+
+        /* Custom animation utilities */
+        .hover-float:hover {
+            animation: float 2s ease-in-out infinite;
+        }
+        .hover-pulse:hover {
+            animation: pulse 1s ease-in-out infinite;
+        }
+        .hover-bounce:hover {
+            animation: animate__bounce 1s;
+        }
+
+        /* ========================================
+           Layout
+           ======================================== */
+        .container {
+            width: 100%;
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 5%;
+        }
+        .container--narrow { max-width: var(--container-narrow); }
+
+        /* ========================================
+           Navigation
+           ======================================== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            padding: 0 5%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: all 0.3s var(--ease-out);
+        }
+        .navbar.scrolled { box-shadow: var(--shadow-md); }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-link {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--color-text);
+            position: relative;
+            padding: 0.5rem 0;
+            transition: color 0.3s var(--ease-out);
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: width 0.3s var(--ease-out);
+        }
+        .nav-link:hover, .nav-link.active { color: var(--color-primary); }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+        /* Mobile Menu Toggle (Hamburger) */
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 44px;
+            height: 44px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            z-index: 1001;
+        }
+        .nav-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--color-text);
+            border-radius: 2px;
+            transition: all 0.3s var(--ease-out);
+            position: relative;
+        }
+        .nav-toggle span::before,
+        .nav-toggle span::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 24px;
+            height: 2px;
+            background: var(--color-text);
+            border-radius: 2px;
+            transition: all 0.3s var(--ease-out);
+        }
+        .nav-toggle span::before { top: -8px; }
+        .nav-toggle span::after { top: 8px; }
+
+        /* Hamburger animation when active */
+        .nav-toggle.active span { background: transparent; }
+        .nav-toggle.active span::before {
+            top: 0;
+            transform: rotate(45deg);
+        }
+        .nav-toggle.active span::after {
+            top: 0;
+            transform: rotate(-45deg);
+        }
+
+        /* ========================================
+           Hero Section
+           ======================================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 5% 80px;
+            background: var(--gradient-primary);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 80%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero .container { position: relative; z-index: 1; }
+        .hero__title {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.8s var(--ease-out);
+        }
+        .hero__subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            animation: fadeInUp 0.8s var(--ease-out) 0.1s both;
+        }
+        #hero-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ========================================
+           Page Header
+           ======================================== */
+        .page-header {
+            padding: 160px 5% 80px;
+            background: var(--gradient-primary);
+            color: white;
+            text-align: center;
+        }
+        .page-header__title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+        }
+        .breadcrumb {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 1rem;
+        }
+        .breadcrumb a { opacity: 0.7; transition: opacity 0.3s; }
+        .breadcrumb a:hover { opacity: 1; }
+
+        /* ========================================
+           Sections
+           ======================================== */
+        .section {
+            padding: var(--section-padding) 5%;
+        }
+        .section--gray { background: var(--color-surface-elevated); }
+        .section--dark { background: #0a0a0a; color: white; }
+        .section--gradient { background: var(--gradient-primary); color: white; }
+
+        .section__title {
+            font-size: clamp(1.75rem, 4vw, 2.75rem);
+            margin-bottom: 1rem;
+        }
+        .section__text {
+            font-size: 1.1rem;
+            color: var(--color-text-muted);
+            max-width: 700px;
+            margin-bottom: 2rem;
+        }
+        .section--dark .section__text,
+        .section--gradient .section__text { color: rgba(255,255,255,0.8); }
+
+        /* ========================================
+           Grid System
+           ======================================== */
+        .grid {
+            display: grid;
+            gap: 2rem;
+        }
+        .grid--2 { grid-template-columns: repeat(2, 1fr); }
+        .grid--3 { grid-template-columns: repeat(3, 1fr); }
+        .grid--4 { grid-template-columns: repeat(4, 1fr); }
+        .grid--align-center { align-items: center; }
+
+        @media (max-width: 1024px) {
+            .grid--4 { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .grid--2, .grid--3, .grid--4 { grid-template-columns: 1fr; }
+        }
+
+        /* ========================================
+           Buttons
+           ======================================== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.875rem 2rem;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: 2px solid transparent;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: all 0.3s var(--ease-out);
+            text-decoration: none;
+        }
+        .btn:hover { transform: translateY(-2px); }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .btn-primary:hover { box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); }
+
+        .btn-outline {
+            background: transparent;
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+        .btn-outline:hover {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-lg { padding: 1.125rem 2.5rem; font-size: 1rem; }
+        .btn-block { width: 100%; }
+
+        .hero .btn,
+        .section--dark .btn,
+        .section--gradient .btn {
+            background: white;
+            color: var(--color-primary);
+        }
+        .hero .btn-primary { background: white; color: var(--color-primary); }
+
+        /* ========================================
+           Cards
+           ======================================== */
+        .card {
+            background: var(--color-surface);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            transition: all 0.4s var(--ease-out);
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .card__icon {
+            display: block;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .card__title {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+        .card__text {
+            color: var(--color-text-muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        .card__subtitle {
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+        }
+        .card__quote {
+            font-size: 1.05rem;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+        .card__author { font-weight: 600; }
+
+        .card--testimonial { text-align: center; }
+        .card--form { padding: 2.5rem; }
+
+        /* Pricing cards */
+        .card--pricing { position: relative; overflow: hidden; }
+        .card--featured {
+            border: 2px solid var(--color-primary);
+            transform: scale(1.05);
+        }
+        .card--featured:hover { transform: scale(1.07); }
+        .pricing__badge {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .pricing__name { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .pricing__price {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+        }
+        .pricing__features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+        .pricing__features li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        /* Team cards */
+        .card--team { text-align: center; }
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 auto 1.5rem;
+        }
+
+        /* ========================================
+           Stats
+           ======================================== */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            flex-wrap: wrap;
+        }
+        .stat { text-align: center; }
+        .stat__number {
+            display: block;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        .stat__label { opacity: 0.8; font-size: 1rem; }
+
+        /* ========================================
+           Process Steps
+           ======================================== */
+        .process {
+            display: flex;
+            justify-content: space-between;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .process__step {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+        }
+        .process__number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .process__title { font-size: 1.25rem; margin-bottom: 0.5rem; }
+        .process__text { color: var(--color-text-muted); }
+
+        /* ========================================
+           Forms
+           ======================================== */
+        .form { display: flex; flex-direction: column; gap: 1.5rem; }
+        .form__group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .form__label { font-weight: 600; font-size: 0.9rem; }
+        .form__input, .form__textarea {
+            padding: 1rem;
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            transition: border-color 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
+        }
+        .form__input:focus, .form__textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+        .form__textarea { min-height: 150px; resize: vertical; }
+
+        /* ========================================
+           Gallery
+           ======================================== */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        .gallery__item {
+            aspect-ratio: 4/3;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+        .gallery__item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s var(--ease-out);
+        }
+        .gallery__item:hover img { transform: scale(1.1); }
+
+        /* ========================================
+           Placeholders
+           ======================================== */
+        .placeholder {
+            width: 100%;
+            height: 100%;
+            min-height: 300px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .placeholder--gradient {
+            background: linear-gradient(135deg,
+                color-mix(in srgb, var(--color-primary) 20%, transparent),
+                color-mix(in srgb, var(--color-secondary) 20%, transparent)
+            );
+        }
+        .map-placeholder {
+            height: 400px;
+            border: 2px dashed var(--color-border);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-muted);
+            font-size: 1.2rem;
+        }
+
+        /* ========================================
+           Footer
+           ======================================== */
+        .footer {
+            background: #0a0a0a;
+            color: white;
+            padding: 80px 5% 40px;
+        }
+        .footer__grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 3rem;
+        }
+        .footer__logo {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 900;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 1rem;
+        }
+        .footer__tagline { opacity: 0.7; }
+        .footer__title { margin-bottom: 1.5rem; font-size: 1rem; }
+        .footer__nav { display: flex; flex-direction: column; gap: 0.75rem; }
+        .footer__nav a {
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        .footer__nav a:hover { opacity: 1; }
+        .footer__contact p {
+            opacity: 0.7;
+            margin-bottom: 0.5rem;
+        }
+        .footer__bottom {
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            opacity: 0.6;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .footer__grid { grid-template-columns: 1fr; gap: 2rem; }
+        }
+
+        /* ========================================
+           Utilities
+           ======================================== */
+        .text-center { text-align: center; }
+        .text-gradient {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ========================================
+           Responsive
+           ======================================== */
+        @media (max-width: 768px) {
+            .navbar { height: 70px; }
+
+            /* Show hamburger on mobile */
+            .nav-toggle { display: flex; }
+
+            /* Mobile menu styles */
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                max-width: 320px;
+                height: 100vh;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 2rem;
+                padding: 2rem;
+                box-shadow: -5px 0 30px rgba(0, 0, 0, 0.1);
+                transition: right 0.3s var(--ease-out);
+                z-index: 1000;
+            }
+            .nav-links.active {
+                right: 0;
+            }
+            .nav-link {
+                font-size: 1.2rem;
+                padding: 0.75rem 0;
+            }
+
+            /* Mobile menu overlay */
+            .nav-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s var(--ease-out);
+                z-index: 999;
+            }
+            .nav-overlay.active {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .hero { padding: 100px 5% 60px; }
+            .stats { gap: 2rem; }
+            .process { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile menu overlay -->
+    <div class="nav-overlay" id="navOverlay"></div>
+
+    <nav class="navbar">
+        <div class="logo">The Gourmet Kitchen</div>
+        <div class="nav-links" id="navLinks"><a href="index.html" class="nav-link ">Home</a>
+            <a href="about.html" class="nav-link ">About</a>
+            <a href="contact.html" class="nav-link ">Contact</a>
+            <a href="menu.html" class="nav-link ">Menu</a>
+            <a href="blog.html" class="nav-link active">Blog</a></div>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">
+            <span></span>
+        </button>
+    </nav>
+
+    <section class="page-header section--lg section--mesh" data-animate="fadeIn" data-section-type="page-header">
+  <div class="container text-center">
+    <div class="hero__badge" data-animate="fadeInDown">Culinary Stories</div>
+    <h1 class="page-header__title hero__title hero__title--gradient" data-animate="fadeInDown" data-animate-delay="0.1s">Culinary Chronicles</h1>
+    <p class="page-header__subtitle hero__subtitle text-xl max-w-prose mx-auto" data-animate="fadeIn" data-animate-delay="0.2s">Behind-the-scenes stories, chef secrets, seasonal inspirations, and the artistry that makes every dish at The Gourmet Kitchen extraordinary</p>
+    <div class="hero__float hero__float--1" data-animate="fadeInLeft" data-animate-delay="0.4s"></div>
+    <div class="hero__float hero__float--2" data-animate="fadeInRight" data-animate-delay="0.5s"></div>
+  </div>
+</section>
+
+    <section class="section" data-section-type="page-content">
+  <div class="container container--narrow">
+    <h2 class="section__title" data-animate="fadeInUp">Culinary Stories & Kitchen Wisdom</h2>
+    <div class="content" data-animate="fadeIn" data-animate-delay="0.2s">
+      <p class="section__text">Welcome to our culinary journal, where passion meets plate and every recipe tells a story. Our blog is your gateway to the artistry behind exceptional dining, featuring behind-the-scenes glimpses of our kitchen, seasonal ingredient spotlights, and the creative process that brings our signature dishes to life. From our chef's personal cooking philosophy to step-by-step techniques that elevate home cooking, we share the secrets that make dining at The Gourmet Kitchen an unforgettable experience.</p>
+      <p class="section__text">Discover weekly features including "Farm to Fork Fridays" where we explore local partnerships with artisan producers, "Technique Tuesdays" offering professional cooking tips you can master at home, and exclusive interviews with our culinary team. Whether you're a passionate home cook seeking inspiration or a food enthusiast curious about the stories behind your favorite dishes, our blog serves as your personal invitation into the heart of our kitchen, where every meal is crafted with intention and every flavor has a purpose.</p>
+    </div>
+  </div>
+</section>
+
+    <section class="section section--xl" style="background: var(--gradient-primary);" data-section-type="cta">
+  <div class="container text-center">
+    <div class="card--glass-dark">
+      <h2 class="section__title text-white mb-4" data-animate="fadeInUp">
+        Never Miss a Recipe Again
+      </h2>
+      <p class="text-xl mb-8" data-animate="fadeInUp" data-animate-delay="0.1s">
+        Join 15,000+ food lovers getting our weekly newsletter with exclusive recipes, chef secrets, and seasonal cooking tips delivered straight to your inbox
+      </p>
+      <div class="flex justify-center gap-4 flex-wrap" data-animate="fadeInUp" data-animate-delay="0.2s">
+        <a href="#newsletter" class="btn btn-white btn-xl btn--shine">Subscribe Free →</a>
+        <a href="#recipes" class="btn btn-outline btn-xl">Browse Recipes</a>
+      </div>
+      <p class="mt-6 text-sm" data-animate="fadeIn" data-animate-delay="0.3s">
+        ✓ Weekly exclusive recipes &nbsp;&nbsp; ✓ Chef cooking tips &nbsp;&nbsp; ✓ Unsubscribe anytime
+      </p>
+    </div>
+  </div>
+</section>
+
+    <footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <h3 class="footer__brand">The Gourmet Kitchen</h3>
+        <p class="footer__description">Crafting Culinary Experiences</p>
+        <div class="footer__social">
+          <a href="#" aria-label="Facebook">📘</a>
+          <a href="#" aria-label="Twitter">🐦</a>
+          <a href="#" aria-label="Instagram">📷</a>
+          <a href="#" aria-label="LinkedIn">💼</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer__title">Quick Links</h4>
+        <ul class="footer__links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer__title">Culinary Services</h4>
+        <ul class="footer__links">
+          <li><a href="#">Private Chef Services</a></li>
+          <li><a href="#">Cooking Classes</a></li>
+          <li><a href="#">Catering Events</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer__title">Contact Info</h4>
+        <ul class="footer__links">
+          <li>📍 San Francisco, CA</li>
+          <li>📞 (415) 555-CHEF</li>
+          <li>✉️ hello@gourmetkitchen.com</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p>© 2026 The Gourmet Kitchen. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+    <script>
+        // Mobile menu toggle
+        (function() {
+            const navToggle = document.getElementById('navToggle');
+            const navLinks = document.getElementById('navLinks');
+            const navOverlay = document.getElementById('navOverlay');
+
+            if (navToggle && navLinks) {
+                navToggle.addEventListener('click', function() {
+                    navToggle.classList.toggle('active');
+                    navLinks.classList.toggle('active');
+                    if (navOverlay) navOverlay.classList.toggle('active');
+                    document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
+                });
+
+                // Close menu when clicking overlay
+                if (navOverlay) {
+                    navOverlay.addEventListener('click', function() {
+                        navToggle.classList.remove('active');
+                        navLinks.classList.remove('active');
+                        navOverlay.classList.remove('active');
+                        document.body.style.overflow = '';
+                    });
+                }
+
+                // Close menu when clicking a link
+                navLinks.querySelectorAll('a').forEach(function(link) {
+                    link.addEventListener('click', function() {
+                        navToggle.classList.remove('active');
+                        navLinks.classList.remove('active');
+                        if (navOverlay) navOverlay.classList.remove('active');
+                        document.body.style.overflow = '';
+                    });
+                });
+            }
+        })();
+
+        // Intersection Observer for scroll animations using Animate.css
+        const animateOnScroll = () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const el = entry.target;
+                        const animationType = el.dataset.animate || 'fadeInUp';
+                        const delay = el.dataset.animateDelay || '0s';
+
+                        // Set custom delay if specified
+                        if (delay !== '0s') {
+                            el.style.setProperty('--animate-delay', delay);
+                        }
+
+                        // Add Animate.css classes
+                        el.classList.add('animate__animated', 'animate__' + animationType);
+
+                        // Clean up after animation completes
+                        el.addEventListener('animationend', () => {
+                            el.classList.remove('animate__animated', 'animate__' + animationType);
+                            el.style.opacity = '1';
+                        }, { once: true });
+
+                        observer.unobserve(el);
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '50px' });
+
+            document.querySelectorAll('[data-animate]').forEach(el => observer.observe(el));
+        };
+
+        // Three.js background effect
+        const initThreeJS = () => {
+            const heroSection = document.querySelector('section:first-of-type, .hero');
+            if (!heroSection) return;
+
+            // Create canvas container
+            const canvas = document.createElement('canvas');
+            canvas.id = 'hero-canvas';
+            heroSection.style.position = 'relative';
+            heroSection.insertBefore(canvas, heroSection.firstChild);
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, heroSection.offsetWidth / heroSection.offsetHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setSize(heroSection.offsetWidth, heroSection.offsetHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // Get theme colors
+            const primary = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#3b82f6';
+            const secondary = getComputedStyle(document.documentElement).getPropertyValue('--secondary').trim() || '#8b5cf6';
+
+            
+            // Particle system
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 200;
+            const posArray = new Float32Array(particlesCount * 3);
+
+            for (let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 10;
+            }
+
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.02,
+                color: primary,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+
+            camera.position.z = 3;
+
+            let mouseX = 0, mouseY = 0;
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+            });
+
+            const animate = () => {
+                requestAnimationFrame(animate);
+                particlesMesh.rotation.x += 0.001;
+                particlesMesh.rotation.y += 0.001;
+                particlesMesh.rotation.x += mouseY * 0.0005;
+                particlesMesh.rotation.y += mouseX * 0.0005;
+                renderer.render(scene, camera);
+            };
+            
+
+            animate();
+
+            // Handle resize
+            window.addEventListener('resize', () => {
+                camera.aspect = heroSection.offsetWidth / heroSection.offsetHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(heroSection.offsetWidth, heroSection.offsetHeight);
+            });
+        };
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            animateOnScroll();
+            if (typeof THREE !== 'undefined') {
+                initThreeJS();
+            }
+        });
+    </script>
+    
+    <!-- WebBuilder Dynamic Hydration Script -->
+    <script>
+    (function() {
+      'use strict';
+
+      // Configuration
+      // Use current origin for API calls - this allows the page to work on custom domains
+      // When served via custom domain proxy (eventos.io), API calls go to eventos.io/api
+      // When served directly from GitHub Pages, fall back to the original API URL
+      const CONFIG = {
+        fallbackApiBaseUrl: 'http://192.168.1.228:5003',
+        orgId: '64e61b022762219d56773ca9',
+        orgSubdomain: 'lt',
+        debug: true // Enable debug mode to help diagnose issues
+      };
+
+      // Determine if we're on a custom domain, GitHub Pages, or org subdomain
+      const isGitHubPages = window.location.hostname.endsWith('.github.io');
+      const isOrgSubdomain = window.location.hostname.endsWith('.mymanager.com');
+      const isCustomDomain = !isGitHubPages && !isOrgSubdomain;
+
+      // Determine API base URL:
+      // 1. If on custom domain (not github.io, not mymanager.com subdomain), use current origin
+      // 2. Otherwise fall back to the configured API URL
+      const apiBaseUrl = isGitHubPages ? CONFIG.fallbackApiBaseUrl : window.location.origin;
+      CONFIG.apiBaseUrl = apiBaseUrl;
+
+      // Determine App base URL for event/tournament links:
+      // 1. If on custom domain (eventos.io), links should stay on custom domain
+      // 2. If on GitHub Pages, links go to org subdomain (eventos.mymanager.com)
+      // 3. If on org subdomain already, use current origin
+      if (isCustomDomain) {
+        // On custom domain like eventos.io - keep links on the same domain
+        CONFIG.appBaseUrl = window.location.origin;
+      } else if (isOrgSubdomain) {
+        // Already on org subdomain - use current origin
+        CONFIG.appBaseUrl = window.location.origin;
+      } else {
+        // On GitHub Pages - use org subdomain or fallback
+        CONFIG.appBaseUrl = CONFIG.orgSubdomain ? 'https://' + CONFIG.orgSubdomain + '.mymanager.com' : 'https://mymanager.com';
+      }
+
+      // Log initial config
+      console.log('[WebBuilder Hydration] Config:', CONFIG);
+      console.log('[WebBuilder Hydration] Is GitHub Pages:', isGitHubPages);
+      console.log('[WebBuilder Hydration] Is Org Subdomain:', isOrgSubdomain);
+      console.log('[WebBuilder Hydration] Is Custom Domain:', isCustomDomain);
+      console.log('[WebBuilder Hydration] API Base URL:', CONFIG.apiBaseUrl);
+      console.log('[WebBuilder Hydration] App Base URL:', CONFIG.appBaseUrl);
+      console.log('[WebBuilder Hydration] Org ID:', CONFIG.orgId);
+
+      const API_URL = CONFIG.apiBaseUrl + '/api/webbuilder-public/' + CONFIG.orgId;
+      console.log('[WebBuilder Hydration] Full API URL:', API_URL);
+
+      // Utility: Format date
+      const formatDate = (dateStr) => {
+        if (!dateStr) return '';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      };
+
+      // Utility: Format price
+      const formatPrice = (price, currency = 'USD') => {
+        if (price === 0) return 'Free';
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(price);
+      };
+
+      // Utility: Truncate text
+      const truncate = (text, maxLength = 100) => {
+        if (!text || text.length <= maxLength) return text || '';
+        return text.substring(0, maxLength).trim() + '...';
+      };
+
+      // Helper: Get days left until event
+      const getDaysLeft = (dateStr) => {
+        if (!dateStr) return null;
+        const eventDate = new Date(dateStr);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        eventDate.setHours(0, 0, 0, 0);
+        const diffTime = eventDate - today;
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      };
+
+      // Helper: Format date range
+      const formatDateRange = (startStr, endStr) => {
+        if (!startStr) return '';
+        const start = new Date(startStr);
+        const end = endStr ? new Date(endStr) : null;
+        const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+        if (end && start.getTime() !== end.getTime()) {
+          if (start.getMonth() === end.getMonth()) {
+            return monthNames[start.getMonth()] + ' ' + start.getDate() + '-' + end.getDate();
+          }
+          return monthNames[start.getMonth()] + ' ' + start.getDate() + ' - ' + monthNames[end.getMonth()] + ' ' + end.getDate();
+        }
+        return monthNames[start.getMonth()] + ' ' + start.getDate();
+      };
+
+      // Helper: Format date and time
+      const formatDateTime = (dateStr) => {
+        if (!dateStr) return '';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) +
+               ' at ' + date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      };
+
+      // Component Renderers - matching editor styles exactly
+      const renderers = {
+        // Events component - matches editor LiveCanvas.js renderer
+        'live-events': (data, container) => {
+          const events = Array.isArray(data) ? data : (data.data || data.events || []);
+          const filterOptions = data.filterOptions || null;
+
+          // Get display options from data attributes (with defaults)
+          const showBanner = container.dataset.showBanner !== 'false';
+          const showDaysLeft = container.dataset.showDaysLeft !== 'false';
+          const showDateRange = container.dataset.showDateRange !== 'false';
+          const showDateTime = container.dataset.showDateTime !== 'false';
+          const showLocation = container.dataset.showLocation !== 'false';
+          const showHost = container.dataset.showHost !== 'false';
+          const showFilters = container.dataset.showFilters !== 'false';
+          const showTabs = container.dataset.showTabs !== 'false';
+          const cardsPerRow = parseInt(container.dataset.cardsPerRow) || 3;
+          const currentTab = container.dataset.activeTab || 'upcoming';
+          const limit = parseInt(container.dataset.limit) || 12;
+
+          // Get saved filter values from data attributes
+          const savedFilters = {
+            locationId: container.dataset.filterLocationId || '',
+            country: container.dataset.filterCountry || '',
+            categoryId: container.dataset.filterCategoryId || '',
+            subcategoryId: container.dataset.filterSubcategoryId || '',
+            type: container.dataset.filterType || '',
+            leadSource: container.dataset.filterLeadSource || ''
+          };
+
+          // Helper to render event card
+          const renderEventCard = (event) => {
+            const startDate = event.start || event.eventStartDate || event.startDate;
+            const endDate = event.end || event.eventEndDate || event.endDate;
+            const daysLeft = getDaysLeft(startDate);
+            const location = event.venueName || event.venue || event.location || (event.eventAddress && event.eventAddress.name);
+            const host = event.hostName;
+            const eventId = event._id || event.id;
+            const isTournament = event.eventCategory === 'tournament';
+            // Use full app URL for event links so they work on custom domains
+            const eventPath = isTournament ? '/tournament-register/' + eventId : '/event-view/' + eventId;
+            const eventUrl = CONFIG.appBaseUrl + eventPath;
+
+            let daysLeftText = '';
+            if (daysLeft !== null && showDaysLeft) {
+              if (daysLeft < 0) daysLeftText = 'PAST EVENT';
+              else if (daysLeft === 0) daysLeftText = 'TODAY';
+              else if (daysLeft === 1) daysLeftText = '1 DAY LEFT';
+              else daysLeftText = daysLeft + ' DAYS LEFT';
+            }
+
+            return `
+            <a href="${eventUrl}" class="dynamic-card event-card" style="display: block; text-decoration: none; color: inherit; background: var(--card-bg, #ffffff); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 32px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 24px rgba(0,0,0,0.1)';">
+              ${showBanner ? `
+                <div style="position: relative; width: 100%; height: 200px; overflow: hidden;">
+                  ${event.eventBanner
+                    ? `<img src="${event.eventBanner}" alt="${event.title}" style="width: 100%; height: 100%; object-fit: cover;">`
+                    : `<div style="width: 100%; height: 100%; background: linear-gradient(135deg, var(--primary, #3b82f6), var(--secondary, #8b5cf6));"></div>`}
+                  ${daysLeftText ? `<span style="position: absolute; top: 12px; right: 12px; background: var(--primary, #3b82f6); color: white; font-size: 0.7rem; font-weight: 700; padding: 6px 12px; border-radius: 20px; letter-spacing: 0.5px;">${daysLeftText}</span>` : ''}
+                  ${showDateRange ? `<div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); padding: 2rem 1rem 1rem; color: white;">
+                    <div style="font-size: 1.25rem; font-weight: 800; letter-spacing: 1px;">${formatDateRange(startDate, endDate)}</div>
+                  </div>` : ''}
+                </div>
+              ` : ''}
+              <div style="padding: 1.25rem;">
+                <h3 style="font-size: 1.125rem; font-weight: 700; margin: 0 0 0.75rem 0; color: var(--text, #1f2937);">${event.title || event.name || 'Event'}</h3>
+                ${showDateTime ? `<p style="font-size: 0.875rem; color: var(--text-muted, #6b7280); margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="opacity: 0.7;">📅</span> ${formatDateTime(startDate)}
+                </p>` : ''}
+                ${showLocation && location ? `<p style="font-size: 0.875rem; color: var(--text-muted, #6b7280); margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="opacity: 0.7;">📍</span> ${typeof location === 'string' ? location : location.name || ''}
+                </p>` : ''}
+                ${showHost && host ? `<p style="font-size: 0.875rem; color: var(--text-muted, #6b7280); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="opacity: 0.7;">👤</span> Hosted by ${host}
+                </p>` : ''}
+              </div>
+            </a>
+          `;
+          };
+
+          // Build header with filters and tabs
+          const filterSelectStyle = 'padding: 0.5rem 1rem; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 0.875rem; background: white; cursor: pointer; min-width: 140px; color: #374151;';
+          const filterLabelStyle = 'display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.5px;';
+          const filterGroupStyle = 'display: flex; flex-direction: column;';
+
+          const headerHtml = (showTabs || showFilters) ? `
+            <div class="events-header" style="display: block; width: 100%; margin-bottom: 2rem;">
+              ${showFilters && filterOptions ? `
+                <div class="events-filter-bar" style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 1rem; margin-bottom: 1rem;">
+                  <div style="${filterGroupStyle}">
+                    <label style="${filterLabelStyle}">Location</label>
+                    <select class="events-filter" data-filter="locationId" data-label="Location" style="${filterSelectStyle}">
+                      <option value="" ${!savedFilters.locationId ? 'selected' : ''}>All Locations</option>
+                      ${(filterOptions.locations || []).map(l => '<option value="' + l.id + '" ' + (savedFilters.locationId === String(l.id) ? 'selected' : '') + '>' + l.label + '</option>').join('')}
+                    </select>
+                  </div>
+                  <div style="${filterGroupStyle}">
+                    <label style="${filterLabelStyle}">Country</label>
+                    <select class="events-filter" data-filter="country" data-label="Country" style="${filterSelectStyle}">
+                      <option value="" ${!savedFilters.country ? 'selected' : ''}>All Countries</option>
+                      ${(filterOptions.countries || []).map(c => '<option value="' + c + '" ' + (savedFilters.country === c ? 'selected' : '') + '>' + c + '</option>').join('')}
+                    </select>
+                  </div>
+                  <div style="${filterGroupStyle}">
+                    <label style="${filterLabelStyle}">Category</label>
+                    <select class="events-filter" data-filter="categoryId" data-label="Category" style="${filterSelectStyle}">
+                      <option value="" ${!savedFilters.categoryId ? 'selected' : ''}>All Categories</option>
+                      ${(filterOptions.categories || []).map(c => '<option value="' + c.id + '" ' + (savedFilters.categoryId === String(c.id) ? 'selected' : '') + '>' + c.label + '</option>').join('')}
+                    </select>
+                  </div>
+                </div>
+              ` : ''}
+              ${showTabs ? `
+                <div class="events-tabs" style="display: inline-flex; align-items: center; background: #f3f4f6; border-radius: 8px; padding: 4px;">
+                  <button class="events-tab ${currentTab === 'upcoming' ? 'active' : ''}" data-tab="upcoming" style="padding: 0.5rem 1rem; font-weight: 600; font-size: 0.875rem; border: none; border-radius: 6px; cursor: pointer; color: ${currentTab === 'upcoming' ? 'white' : '#6b7280'}; background: ${currentTab === 'upcoming' ? 'var(--primary, #3b82f6)' : 'transparent'}; transition: all 0.2s;">
+                    Upcoming
+                  </button>
+                  <button class="events-tab ${currentTab === 'past' ? 'active' : ''}" data-tab="past" style="padding: 0.5rem 1rem; font-weight: 600; font-size: 0.875rem; border: none; border-radius: 6px; cursor: pointer; color: ${currentTab === 'past' ? 'white' : '#6b7280'}; background: ${currentTab === 'past' ? 'var(--primary, #3b82f6)' : 'transparent'}; transition: all 0.2s;">
+                    Past
+                  </button>
+                </div>
+              ` : ''}
+            </div>
+          ` : '';
+
+          // Calculate grid columns based on cardsPerRow
+          const gridCols = 'repeat(' + cardsPerRow + ', minmax(280px, 1fr))';
+
+          // Build events grid HTML
+          const eventsGridHtml = events.length ? `
+            <div class="events-grid" style="display: grid; grid-template-columns: ${gridCols}; gap: 1.5rem;">
+              ${events.slice(0, limit).map(renderEventCard).join('')}
+            </div>
+          ` : '<p class="no-data" style="text-align: center; padding: 2rem; color: #6b7280;">No events found</p>';
+
+          // Reset container styles and render content
+          container.style.display = 'block';
+          container.innerHTML = headerHtml + eventsGridHtml;
+
+          // Add event listeners for tabs
+          container.querySelectorAll('.events-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+              const newTab = this.dataset.tab;
+              container.dataset.activeTab = newTab;
+              container.classList.remove('loaded');
+              container.classList.add('loading');
+              // Re-fetch with new tab parameter
+              hydrateComponent(container);
+            });
+          });
+
+          // Add event listeners for filters
+          container.querySelectorAll('.events-filter').forEach(filter => {
+            filter.addEventListener('change', function() {
+              const filterKey = this.dataset.filter;
+              const attrName = 'filter' + filterKey.charAt(0).toUpperCase() + filterKey.slice(1);
+              container.dataset[attrName] = this.value;
+              container.classList.remove('loaded');
+              container.classList.add('loading');
+              hydrateComponent(container);
+            });
+          });
+        },
+
+        // Tournaments component
+        'live-tournaments': (data, container) => {
+          const tournaments = data.tournaments || data || [];
+          if (!tournaments.length) {
+            container.innerHTML = '<p class="no-data">No upcoming tournaments</p>';
+            return;
+          }
+          container.innerHTML = tournaments.slice(0, 6).map(tournament => {
+            const tournamentId = tournament._id || tournament.id;
+            const tournamentUrl = tournament.registrationUrl || (tournamentId ? CONFIG.appBaseUrl + '/tournament-register/' + tournamentId : '#');
+            return `
+            <div class="dynamic-card tournament-card">
+              ${tournament.image ? `<img src="${tournament.image}" alt="${tournament.name}" class="card-image">` : ''}
+              <div class="card-content">
+                <span class="card-date">${formatDate(tournament.startDate)}</span>
+                <h3 class="card-title">${tournament.name}</h3>
+                <p class="card-description">${truncate(tournament.description, 120)}</p>
+                ${tournament.location ? `<span class="card-location">📍 ${tournament.location}</span>` : ''}
+                <a href="${tournamentUrl}" class="card-btn">Register</a>
+              </div>
+            </div>
+          `;
+          }).join('');
+        },
+
+        // Classes component
+        'live-classes': (data, container) => {
+          const classes = data.classes || data || [];
+          if (!classes.length) {
+            container.innerHTML = '<p class="no-data">No classes available</p>';
+            return;
+          }
+          container.innerHTML = classes.slice(0, 6).map(cls => {
+            const classId = cls._id || cls.id;
+            const classUrl = cls.bookUrl || (classId ? CONFIG.appBaseUrl + '/book-class/' + classId : CONFIG.appBaseUrl + '/classes');
+            return `
+            <div class="dynamic-card class-card">
+              ${cls.image ? `<img src="${cls.image}" alt="${cls.name}" class="card-image">` : ''}
+              <div class="card-content">
+                <h3 class="card-title">${cls.name}</h3>
+                <p class="card-description">${truncate(cls.description, 100)}</p>
+                ${cls.instructor ? `<span class="card-instructor">👤 ${cls.instructor}</span>` : ''}
+                ${cls.schedule ? `<span class="card-schedule">📅 ${cls.schedule}</span>` : ''}
+                <a href="${classUrl}" class="card-btn">Book Now</a>
+              </div>
+            </div>
+          `;
+          }).join('');
+        },
+
+        // Memberships component
+        'live-memberships': (data, container) => {
+          const memberships = data.memberships || data || [];
+          if (!memberships.length) {
+            container.innerHTML = '<p class="no-data">No membership plans available</p>';
+            return;
+          }
+          container.innerHTML = memberships.slice(0, 4).map((plan, index) => {
+            const planId = plan._id || plan.id;
+            const signupUrl = plan.signupUrl || (planId ? CONFIG.appBaseUrl + '/membership/' + planId : CONFIG.appBaseUrl + '/memberships');
+            return `
+            <div class="dynamic-card membership-card ${index === 1 ? 'featured' : ''}">
+              <div class="card-content">
+                <h3 class="card-title">${plan.name}</h3>
+                <div class="card-price">
+                  <span class="price-amount">${formatPrice(plan.price)}</span>
+                  <span class="price-period">/${plan.billingPeriod || 'month'}</span>
+                </div>
+                <p class="card-description">${truncate(plan.description, 80)}</p>
+                <ul class="card-features">
+                  ${(plan.features || []).slice(0, 5).map(f => `<li>✓ ${f}</li>`).join('')}
+                </ul>
+                <a href="${signupUrl}" class="card-btn">Get Started</a>
+              </div>
+            </div>
+          `;
+          }).join('');
+        },
+
+        // Products component
+        'live-products': (data, container) => {
+          const products = data.products || data || [];
+          if (!products.length) {
+            container.innerHTML = '<p class="no-data">No products available</p>';
+            return;
+          }
+          container.innerHTML = products.slice(0, 8).map(product => {
+            const productId = product._id || product.id;
+            const productUrl = product.purchaseUrl || (productId ? CONFIG.appBaseUrl + '/product/' + productId : CONFIG.appBaseUrl + '/shop');
+            return `
+            <div class="dynamic-card product-card">
+              ${product.image ? `<img src="${product.image}" alt="${product.name}" class="card-image">` : ''}
+              <div class="card-content">
+                <h3 class="card-title">${product.name}</h3>
+                <p class="card-description">${truncate(product.description, 80)}</p>
+                <div class="card-price">${formatPrice(product.price)}</div>
+                <a href="${productUrl}" class="card-btn">Buy Now</a>
+              </div>
+            </div>
+          `;
+          }).join('');
+        },
+
+        // Courses component
+        'live-courses': (data, container) => {
+          const courses = data.courses || data || [];
+          if (!courses.length) {
+            container.innerHTML = '<p class="no-data">No courses available</p>';
+            return;
+          }
+          container.innerHTML = courses.slice(0, 6).map(course => {
+            const courseId = course._id || course.id;
+            const courseUrl = course.enrollUrl || (courseId ? CONFIG.appBaseUrl + '/course/' + courseId : CONFIG.appBaseUrl + '/courses');
+            return `
+            <div class="dynamic-card course-card">
+              ${course.image ? `<img src="${course.image}" alt="${course.title}" class="card-image">` : ''}
+              <div class="card-content">
+                <h3 class="card-title">${course.title}</h3>
+                <p class="card-description">${truncate(course.description, 100)}</p>
+                ${course.level ? `<span class="card-badge">${course.level}</span>` : ''}
+                ${course.duration ? `<span class="card-duration">⏱ ${course.duration}</span>` : ''}
+                <a href="${courseUrl}" class="card-btn">Enroll Now</a>
+              </div>
+            </div>
+          `;
+          }).join('');
+        },
+
+        // Bookings component
+        'live-bookings': (data, container) => {
+          const bookings = data.bookingTypes || data || [];
+          if (!bookings.length) {
+            container.innerHTML = '<p class="no-data">No booking options available</p>';
+            return;
+          }
+          container.innerHTML = bookings.slice(0, 6).map(booking => {
+            const bookingId = booking._id || booking.id;
+            const bookingUrl = booking.bookUrl || (bookingId ? CONFIG.appBaseUrl + '/booking/' + bookingId : CONFIG.appBaseUrl + '/bookings');
+            return `
+            <div class="dynamic-card booking-card">
+              <div class="card-content">
+                <h3 class="card-title">${booking.name}</h3>
+                <p class="card-description">${truncate(booking.description, 100)}</p>
+                ${booking.duration ? `<span class="card-duration">⏱ ${booking.duration} min</span>` : ''}
+                ${booking.price ? `<div class="card-price">${formatPrice(booking.price)}</div>` : ''}
+                <a href="${bookingUrl}" class="card-btn">Book Now</a>
+              </div>
+            </div>
+          `;
+          }).join('');
+        },
+
+        // Locations component
+        'live-locations': (data, container) => {
+          const locations = data.locations || data || [];
+          if (!locations.length) {
+            container.innerHTML = '<p class="no-data">No locations available</p>';
+            return;
+          }
+          container.innerHTML = locations.map(location => `
+            <div class="dynamic-card location-card">
+              ${location.image ? `<img src="${location.image}" alt="${location.name}" class="card-image">` : ''}
+              <div class="card-content">
+                <h3 class="card-title">${location.name}</h3>
+                <p class="card-address">📍 ${location.address}</p>
+                ${location.phone ? `<p class="card-phone">📞 ${location.phone}</p>` : ''}
+                ${location.hours ? `<p class="card-hours">🕐 ${location.hours}</p>` : ''}
+                <a href="${location.mapUrl || '#'}" class="card-btn" target="_blank">Get Directions</a>
+              </div>
+            </div>
+          `).join('');
+        },
+
+        // Sports Subcategories component - matches editor LiveCanvas.js renderer
+        'live-sports-subcategories': (data, container) => {
+          let subcategories = Array.isArray(data) ? data : (data.data || data.subcategories || []);
+          const cardsPerRow = parseInt(container.dataset.cardsPerRow) || 4;
+          const limit = parseInt(container.dataset.limit) || 12;
+          const selectedIds = (container.dataset.selectedSubcategories || '').split(',').filter(Boolean);
+
+          console.log('[WebBuilder Hydration] Rendering sports subcategories:', subcategories.length);
+
+          // Filter by selected subcategories if any are specified
+          if (selectedIds.length > 0) {
+            subcategories = subcategories.filter(sub => {
+              const subId = (sub.id || sub._id || sub.value || '').toString();
+              return selectedIds.includes(subId);
+            });
+          }
+
+          if (!subcategories.length) {
+            container.innerHTML = '<p style="text-align: center; padding: 2rem; color: #6b7280;"><span style="font-size: 2rem; display: block; margin-bottom: 0.5rem;">🏆</span>No sports categories available.</p>';
+            return;
+          }
+
+          // Calculate grid columns based on cardsPerRow
+          const gridCols = 'repeat(' + cardsPerRow + ', minmax(200px, 1fr))';
+
+          container.style.display = 'grid';
+          container.style.gridTemplateColumns = gridCols;
+          container.style.gap = '1.5rem';
+
+          container.innerHTML = subcategories.slice(0, limit).map(sub => {
+            const name = sub.name || sub.label || 'Category';
+            const image = sub.image || sub.banner;
+            const icon = sub.icon;
+            const color = sub.color || '#3b82f6';
+            const subId = sub.id || sub._id || sub.value || '';
+            // Link to events filtered by this subcategory
+            const subcategoryUrl = CONFIG.appBaseUrl + '/events?subcategoryId=' + subId;
+
+            return `
+              <a href="${subcategoryUrl}" class="dynamic-card sports-card" data-subcategory-id="${subId}" style="display: block; text-decoration: none; color: inherit; background: var(--card-bg, #ffffff); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 32px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)';">
+                <div style="position: relative; width: 100%; height: 140px; overflow: hidden;">
+                  ${image
+                    ? `<img src="${image}" alt="${name}" style="width: 100%; height: 100%; object-fit: cover;">`
+                    : `<div style="width: 100%; height: 100%; background: linear-gradient(135deg, ${color}, var(--secondary, #8b5cf6)); display: flex; align-items: center; justify-content: center;">
+                        <span style="font-size: 3rem; color: white;">${icon || '🏆'}</span>
+                      </div>`
+                  }
+                </div>
+                <div style="padding: 1rem;">
+                  <h4 style="font-size: 1rem; font-weight: 600; margin: 0; color: var(--text, #1f2937);">${name}</h4>
+                </div>
+              </a>
+            `;
+          }).join('');
+        }
+      };
+
+      // Endpoint mapping for components that don't follow the live-{endpoint} pattern
+      const endpointMap = {
+        'live-sports-subcategories': 'event-subcategories'
+      };
+
+      // Fetch data and hydrate component
+      async function hydrateComponent(container) {
+        const componentType = container.dataset.component;
+        // Use endpoint map if available, otherwise derive from component type
+        const endpoint = endpointMap[componentType] || componentType.replace('live-', '');
+
+        if (!renderers[componentType]) {
+          console.warn('Unknown component type:', componentType);
+          return;
+        }
+
+        // Show loading state
+        container.classList.add('loading');
+
+        // Build query params from data attributes
+        const params = new URLSearchParams();
+        if (container.dataset.limit) params.append('limit', container.dataset.limit);
+        if (container.dataset.featured === 'true') params.append('featured', 'true');
+
+        // Handle events-specific parameters
+        if (componentType === 'live-events') {
+          const activeTab = container.dataset.activeTab || 'upcoming';
+          if (activeTab === 'upcoming') {
+            params.append('upcoming', 'true');
+          } else if (activeTab === 'past') {
+            params.append('past', 'true');
+          }
+
+          // Add filter params if set
+          if (container.dataset.filterLocationId) params.append('locationId', container.dataset.filterLocationId);
+          if (container.dataset.filterCountry) params.append('country', container.dataset.filterCountry);
+          if (container.dataset.filterCategoryId) params.append('categoryId', container.dataset.filterCategoryId);
+          if (container.dataset.filterSubcategoryId) params.append('subcategoryId', container.dataset.filterSubcategoryId);
+          if (container.dataset.filterType) params.append('type', container.dataset.filterType);
+          if (container.dataset.filterLeadSource) params.append('leadSource', container.dataset.filterLeadSource);
+          if (container.dataset.sortOrder) params.append('sort', container.dataset.sortOrder);
+        } else if (componentType === 'live-sports-subcategories') {
+          // Handle sports subcategories specific parameters
+          if (container.dataset.categoryId) params.append('categoryId', container.dataset.categoryId);
+          // Pass selected subcategory IDs to fetch specific ones
+          const selectedIds = container.dataset.selectedSubcategories;
+          if (selectedIds) {
+            params.append('ids', selectedIds);
+          }
+        } else {
+          // For non-events components, use the old upcoming attribute
+          if (container.dataset.upcoming === 'true') params.append('upcoming', 'true');
+          if (container.dataset.ids) params.append('ids', container.dataset.ids);
+          if (container.dataset.categoryId) params.append('categoryId', container.dataset.categoryId);
+        }
+
+        const queryString = params.toString() ? '?' + params.toString() : '';
+        const fetchUrl = API_URL + '/' + endpoint + queryString;
+        console.log('[WebBuilder Hydration] Fetching:', fetchUrl);
+
+        try {
+          // For events component, also fetch filter options if filters are shown
+          let filterOptions = null;
+          if (componentType === 'live-events' && container.dataset.showFilters !== 'false') {
+            try {
+              const filterResponse = await fetch(API_URL + '/events/filters/options');
+              if (filterResponse.ok) {
+                const filterResult = await filterResponse.json();
+                filterOptions = filterResult.data || null;
+              }
+            } catch (filterError) {
+              console.warn('[WebBuilder Hydration] Could not fetch filter options:', filterError.message);
+            }
+          }
+
+          const response = await fetch(fetchUrl);
+          console.log('[WebBuilder Hydration] Response status:', response.status, response.statusText);
+
+          if (!response.ok) {
+            throw new Error('Failed to fetch ' + endpoint + ' - Status: ' + response.status);
+          }
+
+          const result = await response.json();
+          let data = result.data || result;
+
+          // Attach filter options to data for events renderer
+          if (componentType === 'live-events' && filterOptions) {
+            data = { data: Array.isArray(data) ? data : data.data || data, filterOptions: filterOptions };
+          }
+
+          console.log('[WebBuilder Hydration] Received data for', componentType, ':', data);
+
+          renderers[componentType](data, container);
+          container.classList.remove('loading');
+          container.classList.add('loaded');
+
+          if (CONFIG.debug) console.log('[WebBuilder Hydration] Hydrated:', componentType, 'with', Array.isArray(data) ? data.length : (data.data ? data.data.length : 1), 'items');
+        } catch (error) {
+          console.error('[WebBuilder Hydration] Error for', componentType, ':', error.message);
+          console.error('[WebBuilder Hydration] Attempted URL:', fetchUrl);
+          container.innerHTML = '<p class="error" style="color: #ef4444; padding: 1rem; text-align: center;">Unable to load ' + endpoint + '. API: ' + fetchUrl + '</p>';
+          container.classList.remove('loading');
+          container.classList.add('error');
+        }
+      }
+
+      // Initialize hydration
+      function initHydration() {
+        const dynamicContainers = document.querySelectorAll('[data-component]');
+
+        if (CONFIG.debug) {
+          console.log('WebBuilder Hydration: Found', dynamicContainers.length, 'dynamic components');
+        }
+
+        dynamicContainers.forEach(container => {
+          // Use IntersectionObserver for lazy loading
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                hydrateComponent(entry.target);
+                observer.unobserve(entry.target);
+              }
+            });
+          }, { rootMargin: '100px' });
+
+          observer.observe(container);
+        });
+      }
+
+      // Run on DOM ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initHydration);
+      } else {
+        initHydration();
+      }
+    })();
+    </script>
+
+    <!-- Dynamic Component Styles -->
+    <style>
+      /* Dynamic component container */
+      [data-component] {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        min-height: 200px;
+        transition: opacity 0.3s ease;
+      }
+
+      [data-component].loading {
+        opacity: 0.6;
+      }
+
+      [data-component].loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 40px;
+        height: 40px;
+        margin: -20px 0 0 -20px;
+        border: 3px solid var(--color-border, #e5e7eb);
+        border-top-color: var(--color-primary, #3b82f6);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      /* Dynamic cards */
+      .dynamic-card {
+        background: var(--color-surface, #fff);
+        border-radius: var(--radius-md, 16px);
+        overflow: hidden;
+        box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .dynamic-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg, 0 10px 40px rgb(0 0 0 / 0.08));
+      }
+
+      .dynamic-card .card-image {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+      }
+
+      .dynamic-card .card-content {
+        padding: 1.25rem;
+      }
+
+      .dynamic-card .card-date,
+      .dynamic-card .card-badge {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-primary, #3b82f6);
+        margin-bottom: 0.5rem;
+      }
+
+      .dynamic-card .card-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--color-text, #1f2937);
+      }
+
+      .dynamic-card .card-description {
+        font-size: 0.875rem;
+        color: var(--color-text-muted, #6b7280);
+        margin-bottom: 1rem;
+        line-height: 1.6;
+      }
+
+      .dynamic-card .card-location,
+      .dynamic-card .card-schedule,
+      .dynamic-card .card-instructor,
+      .dynamic-card .card-duration {
+        display: block;
+        font-size: 0.8125rem;
+        color: var(--color-text-muted, #6b7280);
+        margin-bottom: 0.5rem;
+      }
+
+      .dynamic-card .card-price {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--color-text, #1f2937);
+        margin: 0.75rem 0;
+      }
+
+      .dynamic-card .card-price .price-period {
+        font-size: 0.875rem;
+        font-weight: 400;
+        color: var(--color-text-muted, #6b7280);
+      }
+
+      .dynamic-card .card-features {
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0;
+        font-size: 0.875rem;
+      }
+
+      .dynamic-card .card-features li {
+        padding: 0.25rem 0;
+        color: var(--color-text-muted, #6b7280);
+      }
+
+      .dynamic-card .card-btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background: var(--color-primary, #3b82f6);
+        color: white;
+        font-weight: 600;
+        font-size: 0.875rem;
+        border-radius: var(--radius-sm, 8px);
+        text-align: center;
+        transition: background 0.2s ease, transform 0.2s ease;
+        margin-top: 0.5rem;
+      }
+
+      .dynamic-card .card-btn:hover {
+        background: var(--color-secondary, #2563eb);
+        transform: translateY(-2px);
+      }
+
+      /* Membership featured card */
+      .membership-card.featured {
+        border: 2px solid var(--color-primary, #3b82f6);
+        transform: scale(1.02);
+      }
+
+      /* No data / Error states */
+      .no-data, .error {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 2rem;
+        color: var(--color-text-muted, #6b7280);
+      }
+
+      .error {
+        color: #ef4444;
+      }
+
+      /* ========================================
+         RESPONSIVE STYLES - Mobile First
+         ======================================== */
+
+      /* Events grid responsive */
+      .events-grid {
+        width: 100%;
+      }
+
+      /* Filter bar responsive */
+      .events-filter-bar {
+        width: 100%;
+      }
+
+      /* Tablet (768px and below) */
+      @media (max-width: 768px) {
+        /* Dynamic component grids */
+        [data-component] {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 1rem;
+        }
+
+        .events-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 1rem;
+        }
+
+        /* Filter bar stacks */
+        .events-filter-bar {
+          flex-direction: column;
+          align-items: stretch !important;
+        }
+
+        .events-filter-bar > div {
+          width: 100%;
+        }
+
+        .events-filter-bar select {
+          width: 100%;
+          min-width: unset !important;
+        }
+
+        /* Tabs responsive */
+        .events-tabs {
+          width: 100%;
+          justify-content: center;
+        }
+
+        /* Card adjustments */
+        .dynamic-card .card-content {
+          padding: 1rem;
+        }
+
+        .dynamic-card .card-title {
+          font-size: 1rem;
+        }
+
+        .dynamic-card .card-image,
+        .event-card img {
+          height: 160px;
+        }
+
+        /* Sports cards */
+        .sports-card {
+          min-width: unset !important;
+        }
+      }
+
+      /* Mobile (480px and below) */
+      @media (max-width: 480px) {
+        /* Single column on mobile */
+        [data-component] {
+          grid-template-columns: 1fr !important;
+          gap: 1rem;
+        }
+
+        .events-grid {
+          grid-template-columns: 1fr !important;
+          gap: 1rem;
+        }
+
+        /* Full width header elements */
+        .events-header {
+          padding: 0;
+        }
+
+        .events-tabs {
+          width: 100%;
+        }
+
+        .events-tabs button {
+          flex: 1;
+          padding: 0.75rem 0.5rem !important;
+          font-size: 0.8rem !important;
+        }
+
+        /* Card content adjustments */
+        .dynamic-card {
+          border-radius: 12px;
+        }
+
+        .dynamic-card .card-content {
+          padding: 0.875rem;
+        }
+
+        .dynamic-card .card-title {
+          font-size: 0.9375rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .dynamic-card .card-description {
+          font-size: 0.8125rem;
+          margin-bottom: 0.75rem;
+        }
+
+        .dynamic-card .card-btn {
+          width: 100%;
+          padding: 0.625rem 1rem;
+          font-size: 0.8125rem;
+        }
+
+        /* Event card specific */
+        .event-card > div:first-child {
+          height: 180px !important;
+        }
+
+        .event-card .card-content p {
+          font-size: 0.8125rem !important;
+        }
+
+        /* Days left badge */
+        .event-card span[style*="position: absolute"][style*="top: 12px"] {
+          font-size: 0.6rem !important;
+          padding: 4px 8px !important;
+        }
+
+        /* Date range overlay */
+        .event-card div[style*="position: absolute"][style*="bottom: 0"] {
+          padding: 1.5rem 0.75rem 0.75rem !important;
+        }
+
+        .event-card div[style*="position: absolute"][style*="bottom: 0"] > div {
+          font-size: 1rem !important;
+        }
+
+        /* Sports subcategory cards */
+        .sports-card > div:first-child {
+          height: 120px !important;
+        }
+
+        .sports-card h4 {
+          font-size: 0.875rem !important;
+        }
+
+        /* Filter selects */
+        .events-filter {
+          font-size: 0.8125rem !important;
+          padding: 0.625rem 0.75rem !important;
+        }
+
+        /* Filter labels */
+        .events-filter-bar label {
+          font-size: 0.6875rem !important;
+        }
+      }
+
+      /* Very small screens (360px and below) */
+      @media (max-width: 360px) {
+        .dynamic-card .card-title {
+          font-size: 0.875rem;
+        }
+
+        .events-tabs button {
+          font-size: 0.75rem !important;
+          padding: 0.5rem 0.25rem !important;
+        }
+
+        .event-card > div:first-child {
+          height: 150px !important;
+        }
+      }
+    </style>
+
+</body>
+</html>
